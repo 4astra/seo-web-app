@@ -16,17 +16,19 @@ function App() {
       .then((data) => {
         setBooKStructuredData(data);
         if (data) {
+          const date = new Date(data.updated).toISOString();
+
           setBookSEO({
-            "@context": "https://schema.org/",
-            "@type": "Book",
-            bookFormat: "http://schema.org/EBook",
-            name: data.title,
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: data.title,
             image: data.image,
             author: {
-              "@type": "Thing",
+              "@type": "Person",
               name: data.author.name,
+              url: data.author.url
             },
-            datePublished: data.updated,
+            datePublished: date,
             description: data.short_desc,
           });
         }
@@ -40,19 +42,34 @@ function App() {
         <title>{bookStructuredData.title}</title>
         <meta name="keyword" content={bookStructuredData.meta_keyword} />
         <meta name="description" content={bookStructuredData.meta_desc} />
-      </Helmet>
-      {bookSEO ? (
         <script type="application/ld+json">{JSON.stringify(bookSEO)}</script>
-      ) : null}
-      <header className="App-header">
-        {bookStructuredData && bookStructuredData.image ? (
-          <img src={bookStructuredData.image} className="App-logo" alt="logo" />
-        ) : null}
+      </Helmet>
 
+      <h1>{bookStructuredData.title}</h1>
+      {bookStructuredData.author ? (
+        <div>
+          <h3>
+            by{" "}
+            <a href={bookStructuredData.author.url}>
+              {bookStructuredData.author.name}
+            </a>{" "}
+            on {bookStructuredData.datePublished}
+          </h3>
+        </div>
+      ) : null}
+
+      {bookStructuredData && bookStructuredData.image ? (
+        <img
+          src={bookStructuredData.image}
+          alt={bookStructuredData.short_title}
+        />
+      ) : null}
+
+      {bookStructuredData.short_desc ? (
         <div
           dangerouslySetInnerHTML={{ __html: bookStructuredData.short_desc }}
         />
-      </header>
+      ) : null}
     </div>
   );
 }
