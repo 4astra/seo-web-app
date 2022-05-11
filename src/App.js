@@ -6,13 +6,15 @@ const requestOptions = {
 };
 
 function App() {
-  const [bookStructuredData, setBooKStructuredData] = useState({});
+  const [bookStructuredData, setBookStructuredData] = useState(null);
   useEffect(() => {
-    fetch("https://truyenconect.com/api/story/get/101", requestOptions)
-      .then((response) => response.json())
-      .then((data) => {
-        setBooKStructuredData(data);
-      });
+    if (!bookStructuredData) {
+      fetch("https://truyenconect.com/api/story/get/101", requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          setBookStructuredData(data);
+        });
+    }
   });
 
   return (
